@@ -1,6 +1,7 @@
 CREATE DATABASE MedicalGroupTarde;
 USE MedicalGroupTarde;
 
+
 --DDL
 
 CREATE TABLE TipoUsuario (
@@ -26,6 +27,14 @@ CREATE TABLE Clinica (
 	HoraFecha TIME
 );
 
+CREATE TABLE Endereco (
+	IdEndereco INT PRIMARY KEY IDENTITY,
+	CEP VARCHAR (15),
+	Rua VARCHAR (200),
+	Numero INT,
+	Complemento VARCHAR (200)
+);
+
 CREATE TABLE Usuario (
 	IdUsuario INT PRIMARY KEY IDENTITY,
 	Nome VARCHAR (100),
@@ -34,63 +43,39 @@ CREATE TABLE Usuario (
 	IdTipoUsuario INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario)
 );
 
-
-
-CREATE TABLE Paciente(
-	IdPaciente INT PRIMARY KEY IDENTITY,
-	IdTipoUsuario INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario),
-	NomePaciente VARCHAR (200),
-	Email VARCHAR (200),
-	DataNascimento DATE,
-	Telefone VARCHAR (200),
-	RG VARCHAR (200),
-	CPF VARCHAR (200),
-
+CREATE TABLE Situacao (
+	IdSituacao INT PRIMARY KEY IDENTITY,
+	Situacao VARCHAR (200)
 );
 
+ALTER TABLE Medico
+DROP COLUMN Nome;
 CREATE TABLE Medico (
 	IdMedico INT PRIMARY KEY IDENTITY,
-	Nome VARCHAR (200),
 	CRM VARCHAR (200),
-	Email VARCHAR (200),
-	Senha VARCHAR (200),
+	IdEndereco INT FOREIGN KEY REFERENCES Endereco (IdEndereco),
 	IdEspecialidade INT FOREIGN KEY REFERENCES Especialidade (IdEspecialidade),
 	IdClinica INT FOREIGN KEY REFERENCES Clinica (IdClinica),
-	IdTipoUsuario INT FOREIGN KEY REFERENCES TipoUsuario (IdTipoUsuario)
+	IdUsuario INT FOREIGN KEY REFERENCES Usuario (IdUsuario),
 );
 
 CREATE TABLE Consulta (
 	IdConsulta INT PRIMARY KEY IDENTITY,
 	DataConsulta DATE,
-	Situacao VARCHAR (200),
 	Descricao VARCHAR (200),
-	IdUsuario INT FOREIGN KEY REFERENCES Usuario (IdUsuario),
+	IdClinica INT FOREIGN KEY REFERENCES Clinica (IdClinica),
+	IdSituacao INT FOREIGN KEY REFERENCES Situacao (IdSituacao),
 	IdMedico INT FOREIGN KEY REFERENCES Medico (IdMedico),
+	IdProntuario INT FOREIGN KEY REFERENCES Prontuario (IdProntuario)
 
 );
-
-ALTER TABLE Consulta
-DROP COLUMN IdUsuario;
-
-
-CREATE TABLE Endereco (
-	IdEndereco	INT PRIMARY KEY IDENTITY,
-	Rua	VARCHAR (100),
-	Numero	INT,
-	Estado VARCHAR (100),
-	CEP	VARCHAR (100),
-	IdPaciente	INT FOREIGN KEY REFERENCES Paciente (IdPaciente)
-);
-
 
 CREATE TABLE Prontuario (
 	IdProntuario INT PRIMARY KEY IDENTITY,
-	Nome VARCHAR (200),
+	RG VARCHAR (10),
+	CPF VARCHAR (12),
+	Telefone VARCHAR (16),
+	DataNascimento DATE,
 	IdEndereco INT FOREIGN KEY REFERENCES Endereco (IdEndereco),
-	IdPaciente INT FOREIGN KEY REFERENCES Paciente (IdPaciente),
-	IdConsulta INT FOREIGN KEY REFERENCES Consulta (IdConsulta)
+	IdUsuario INT FOREIGN KEY REFERENCES Usuario (IdUsuario)
 );
-
-
-
-SELECT * FROM Prontuario;
